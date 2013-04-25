@@ -19,7 +19,8 @@ module VagrantPlugins
           :paused,
           :shutdown,
           :shutoff,
-          :crashed]
+          :crashed
+        ]
 
         # The UUID of the virtual machine we represent
         attr_reader :uuid
@@ -35,20 +36,10 @@ module VagrantPlugins
           @pool_name = "vagrant"
           @network_name = "vagrant"
 
-          # Open a connection to the qemu driver
-          begin
-            @conn = Libvirt::open('qemu:///system')
-          rescue Libvirt::Error => e
-            if e.libvirt_code == 5
-              # can't connect to hypervisor
-              raise Vagrant::Errors::KvmNoConnection
-            else
-              raise e
-            end
-          end
+          @conn = Util::LibvirtHelper.connect
           @version = read_version
           if (@version[:maj] == 1 && @version[:min] < 2) || @version[:maj] < 1
-            raise Vagrant::Errors::KvmInvalidVersion
+            raise Errors::KvmInvalidVersion
           end
 
           # Get storage pool if it exists
@@ -142,21 +133,22 @@ module VagrantPlugins
 
         # Create network
         def create_network(config)
-          begin
-            # Get the network if it exists
-            @network = @conn.lookup_network_by_name(@network_name)
-            definition = Util::NetworkDefinition.new(@network_name,
-                                                     @network.xml_desc)
-            @network.destroy if @network.active?
-            @network.undefine
-          rescue Libvirt::RetrieveError
-            # Network doesn't exist, create with defaults
-            definition = Util::NetworkDefinition.new(@network_name)
-          end
-          definition.configure(config)
-          @network = @conn.define_network_xml(definition.as_xml)
-          @logger.info("Creating network #{@network_name}")
-          @network.create
+          # no need to create network using NAT
+          # begin
+          #    # Get the network if it exists
+          #    @network = @conn.lookup_network_by_name(@network_name)
+          #    definition = Util::NetworkDefinition.new(@network_name,
+          #                                             @network.xml_desc)
+          #    @network.destroy if @network.active?
+          #    @network.undefine
+          #  rescue Libvirt::RetrieveError
+          #    # Network doesn't exist, create with defaults
+          #    definition = Util::NetworkDefinition.new(@network_name)
+          #  end
+          #  definition.configure(config)
+          #  @network = @conn.define_network_xml(definition.as_xml)
+          #  @logger.info("Creating network #{@network_name}")
+          #  @network.create
         end
 
         # Initialize or create storage pool
@@ -250,7 +242,7 @@ module VagrantPlugins
         # This will raise a VagrantError if things are not ready.
         def verify!
           if @conn.closed?
-            raise Vagrant::Errors::KvmNoConnection
+            raise Errors::KvmNoConnection
           end
         end
 
