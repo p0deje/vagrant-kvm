@@ -51,7 +51,7 @@ module VagrantPlugins
           doc = Nokogiri::XML(definition)
           # we don't need no namespace
           doc.remove_namespaces!
-          @name = Time.now.to_i.to_s + '_' + doc.at_css("VirtualSystemIdentifier").content
+          @name = Dir.pwd.split('/').last + '_' + doc.at_css("VirtualSystemIdentifier").content
           devices = doc.css("VirtualHardwareSection Item")
           for device in devices
             case device.at_css("ResourceType").content
