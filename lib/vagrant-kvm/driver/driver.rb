@@ -117,7 +117,7 @@ module VagrantPlugins
           # copy volume to storage pool
           box_disk = definition.disk
           new_disk = File.basename(box_disk, File.extname(box_disk)) + "-" +
-            Time.now.to_i.to_s + ".img"
+            Time.now.to_i.to_s + ".qcow2"
           @logger.info("Converting volume #{box_disk} to #{new_disk}")
           old_path = File.join(File.dirname(ovf), box_disk)
           new_path = File.join(path, new_disk)
