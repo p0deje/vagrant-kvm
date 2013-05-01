@@ -88,12 +88,12 @@ module VagrantPlugins
           # copy volume to storage pool
           box_disk = definition.disk
           new_disk = File.basename(box_disk, File.extname(box_disk)) + "-" +
-            Time.now.to_i.to_s + ".img"
+            Time.now.to_i.to_s + ".qcow2"
           @logger.info("Copying volume #{box_disk} to #{new_disk}")
           old_path = File.join(File.dirname(xml), box_disk)
           new_path = File.join(path, new_disk)
           # we use qemu-img convert to preserve image size
-          system("qemu-img convert -p #{old_path} -O raw #{new_path}")
+          system("qemu-img convert -p #{old_path} -O qcow2 #{new_path}")
           @pool.refresh
           volume = @pool.lookup_volume_by_name(new_disk)
           definition.disk = volume.path
