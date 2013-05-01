@@ -121,7 +121,7 @@ module VagrantPlugins
           @logger.info("Converting volume #{box_disk} to #{new_disk}")
           old_path = File.join(File.dirname(ovf), box_disk)
           new_path = File.join(path, new_disk)
-          system("qemu-img convert -p #{old_path} -O raw #{new_path}")
+          system("qemu-img convert -p #{old_path} -O qcow2 #{new_path}")
           @pool.refresh
           volume = @pool.lookup_volume_by_name(new_disk)
           definition.disk = volume.path
