@@ -66,7 +66,7 @@ module VagrantPlugins
         mac = $1
         line = ''
         180.times do
-          arp = `/usr/sbin/arp -n`.split("\n")
+          arp = `arp -n`.split("\n")
           line = arp.detect { |l| l.include?(mac) }
           line ? break : sleep(1)
         end
