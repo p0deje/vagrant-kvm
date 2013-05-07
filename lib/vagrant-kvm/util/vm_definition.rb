@@ -52,7 +52,7 @@ module VagrantPlugins
           # we don't need no namespace
           doc.remove_namespaces!
           @name = doc.at_css("VirtualSystemIdentifier").content
-          @name = Dir.pwd.split('/').last + '_' + doc.at_css("VirtualSystemIdentifier").content
+          @name = Dir.pwd.split('/').last + '_' + doc.at_css("VirtualSystemIdentifier").content + '_' + Time.now.to_i.to_s
           devices = doc.css("VirtualHardwareSection Item")
           for device in devices
             case device.at_css("ResourceType").content
