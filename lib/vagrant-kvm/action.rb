@@ -15,7 +15,6 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use Network
           b.use Provision
-          b.use PruneNFSExports
           b.use Boot
           b.use NFS
           b.use PrepareNFSSettings
@@ -68,6 +67,8 @@ module VagrantPlugins
                   b3.use ForcedHalt
                 end
               end
+
+              b.use PruneNFSExports
             else
               b2.use MessageNotCreated
             end
